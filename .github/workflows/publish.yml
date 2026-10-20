@@ -1,4 +1,4 @@
-# cspell:words ncipollo
+# cspell:words ncipollo mondeja
 
 name: publish
 on:
@@ -136,7 +136,10 @@ jobs:
 
     env:
       VERSION: ${{ needs.build.outputs.version }}
-      NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+    permissions:
+      id-token: write
+      contents: read
 
     steps:
       - uses: actions/checkout@v5
