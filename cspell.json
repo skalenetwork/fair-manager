@@ -6,9 +6,10 @@
         { "name": "libraries", "path": "./dictionary/libraries.txt"},
         { "name": "domain-terms", "path": "./dictionary/domain-terms.txt"},
         { "name": "names", "path": "./dictionary/names.txt"},
-        { "name": "solidity", "path": "./dictionary/solidity.txt"}
+        { "name": "solidity", "path": "./dictionary/solidity.txt"},
+        { "name": "python", "path": "./dictionary/python.txt"}
     ],
-    "dictionaries": ["domain-terms", "libraries", "names", "skale-terms", "solidity"],
+    "dictionaries": ["domain-terms", "libraries", "names", "skale-terms", "solidity", "python"],
     "ignorePaths": [
         ".yarn",
         "artifacts",
