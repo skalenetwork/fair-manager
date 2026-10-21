@@ -69,6 +69,7 @@ jobs:
 
     - name: Test upgrade
       env:
+        ALCHEMY_API_KEY: ${{ secrets.ALCHEMY_API_KEY }}
         NODE_VERSION: ${{ matrix.node-version }}
       run: ./scripts/test_upgrade.sh
 
