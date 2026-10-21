@@ -40,6 +40,12 @@ Role ID for Status contract operations
 uint64 STATUS_ROLE
 ```
 
+### constructor
+
+```solidity
+constructor() public
+```
+
 ### initialize
 
 Initializes the FairAccessManager contract
