@@ -1,5 +1,5 @@
 {
     "exclude_dependencies": true,
-    "filter_paths": "hardhat-dependency-compiler",
+    "filter_paths": "node_modules|hardhat-dependency-compiler",
     "detectors_to_exclude": "block-timestamp,reentrancy-events,reentrancy-benign"
 }
