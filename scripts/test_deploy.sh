@@ -6,7 +6,7 @@ if [ -n "$ALCHEMY_API_KEY" ]; then
 else
     export MAINNET_ENDPOINT="https://eth.llamarpc.com"
 fi
-export CHAIN_NAME="affectionate-immediate-pollux"
+export CHAIN_NAME="elated-tan-skat" # TODO: replace with fair boot when created
 export TARGET="production"
 
 yarn hardhat run migrations/deploy.ts
