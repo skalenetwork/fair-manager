@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 set -e
-if [ -n "ALCHEMY_API_KEY" ]; then
+if [ -n "$ALCHEMY_API_KEY" ]; then
     export MAINNET_ENDPOINT="https://eth-mainnet.g.alchemy.com/v2/${ALCHEMY_API_KEY}"
 else
     export MAINNET_ENDPOINT="https://eth.llamarpc.com"
