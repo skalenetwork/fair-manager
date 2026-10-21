@@ -64,7 +64,7 @@ jobs:
 
     - name: Test deployment
       env:
-        INFURA_API_TOKEN: ${{ secrets.INFURA_API_TOKEN }}
+        ALCHEMY_API_KEY: ${{ secrets.ALCHEMY_API_KEY }}
       run: ./scripts/test_deploy.sh
 
     - name: Test upgrade
