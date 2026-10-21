@@ -43,7 +43,7 @@ if [ -n "$ALCHEMY_API_KEY" ]; then
 else
     MAINNET_ENDPOINT="https://eth.llamarpc.com"
 fi
-CHAIN_NAME="affectionate-immediate-pollux"
+CHAIN_NAME="elated-tan-skat" # TODO: replace with fair boot when created
 
 DEPLOY_OUTPUT_FILE="$GITHUB_WORKSPACE/data/deploy.txt"
 export TARGET="production"
