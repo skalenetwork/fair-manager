@@ -57,7 +57,7 @@ jobs:
       with:
         ignore-compile: true
         slither-args: "--compile-force-framework hardhat"
-        node-version: ${{ matrix.node-version }}
+        node-version: "20"
     - name: Test generate-types package
       run: yarn buildTypes
 
