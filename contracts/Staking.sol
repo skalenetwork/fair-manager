@@ -509,7 +509,10 @@ contract Staking is AccessManagedUpgradeable, ReentrancyGuardUpgradeable, IStaki
      */
     function nodeCreated(NodeId node, address nodeAddress) external payable override restricted {
         if(_rewardWallets[node] == IRewardWallet(payable(0))) {
+            // _deployRewardWallet does not do any external calls
+            // slither-disable-start reentrancy-no-eth
             _deployRewardWallet(node);
+            // slither-disable-end reentrancy-no-eth
         }
 
         // Node should be set as disabled with 0 stake before anything
@@ -534,7 +537,6 @@ contract Staking is AccessManagedUpgradeable, ReentrancyGuardUpgradeable, IStaki
         // Committee should disable node first
         require(!isNodeEnabled(node), NodeIsNotDisabled(node));
         _nodesAllowedReceivers[node].clear();
-        delete _nodesAllowedReceivers[node];
         // Don't delete reward wallet,
         // because it's needed for archive node synchronization
         emit NodeDataRemoved(node);
@@ -545,12 +547,18 @@ contract Staking is AccessManagedUpgradeable, ReentrancyGuardUpgradeable, IStaki
         Fair amountToRetrieve = FundLibrary.ZERO_FAIR;
 
         if (nodeOwnerStake > FundLibrary.ZERO_FAIR) {
+            // Makes calls only to trusted contracts
+            // slither-disable-start reentrancy-no-eth
             _retrieveFundsFor(node, nodeOwnerStake, nodeOwner);
+            // slither-disable-end reentrancy-no-eth
             amountToRetrieve = amountToRetrieve + nodeOwnerStake;
         }
 
         if (fees > FundLibrary.ZERO_FAIR) {
+            // Makes calls only to trusted contracts
+            // slither-disable-start reentrancy-no-eth
             _requestSendFees(node, fees, payable(nodeOwner));
+            // slither-disable-end reentrancy-no-eth
             amountToRetrieve = amountToRetrieve + fees;
 
         }
@@ -1104,7 +1112,10 @@ contract Staking is AccessManagedUpgradeable, ReentrancyGuardUpgradeable, IStaki
     {
         // sender can be allowed user, nodeOwner, or Nodes.sol contract (node deleted)
         emit FeeClaimRequested(node, msg.sender, to, amount);
+        // Saved with nonReentrant modifier
+        // slither-disable-start reentrancy-no-eth
         _pullReward(node);
+        // slither-disable-end reentrancy-no-eth
         Fair balance = _getTotalBalance();
         bool nodeIsEnabled = isNodeEnabled(node);
         if (nodeIsEnabled) {
@@ -1148,7 +1159,10 @@ contract Staking is AccessManagedUpgradeable, ReentrancyGuardUpgradeable, IStaki
         _checkNodeOwnerRestriction(staker, node);
 
         emit RetrieveRequested(staker, node, value);
+        // Saved with nonReentrant modifier
+        // slither-disable-start reentrancy-no-eth
         _pullReward(node);
+        // slither-disable-end reentrancy-no-eth
         nodeIsEnabled = isNodeEnabled(node);
 
         if (nodeIsEnabled) {

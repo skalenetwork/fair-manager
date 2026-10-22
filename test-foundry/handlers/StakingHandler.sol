@@ -37,7 +37,7 @@ interface IStakingHandler {
      * @param feeRate The new fee rate (must be less than current rate)
      * @param nodeIndex Index into the fixture node array (modulo array length)
      */
-    function setFeeRate(uint8 feeRate, uint8 nodeIndex) external;
+    function setFeeRate(uint16 feeRate, uint256 nodeIndex) external;
 
     /**
      * @notice Stakes funds to a node on behalf of a user
@@ -45,7 +45,7 @@ interface IStakingHandler {
      * @param nodeIndex Index into the fixture node array (modulo array length)
      * @param amountToStake The amount to stake (in wei)
      */
-    function stakeFor(address user, uint8 nodeIndex, uint48 amountToStake) external;
+    function stakeFor(address user, uint8 nodeIndex, uint256 amountToStake) external;
 
     /**
      * @notice Requests to retrieve all stake from a node for a user
@@ -85,7 +85,7 @@ interface IStakingHandler {
      * @param nodeIndex Index into the fixture node array (modulo array length)
      * @param amount The amount of fees to claim (must be <= earned fees)
      */
-    function claimFee(uint8 nodeIndex, uint32 amount) external;
+    function claimFee(uint8 nodeIndex, uint256 amount) external;
 
     /**
      * @notice Gets the number of nodes in the fixture
@@ -151,7 +151,7 @@ contract StakingHandler is Test, IStakingHandler {
     }
 
     /// @inheritdoc IStakingHandler
-    function setFeeRate(uint8 feeRate, uint8 nodeIndex) public override {
+    function setFeeRate(uint16 feeRate, uint256 nodeIndex) public override {
         NodeId node = fixtureNode[nodeIndex % fixtureNode.length];
         assert(staking.nodes().activeNodeExists(node));
         vm.assume(feeRate < staking.getNodeFeeRate(node));
@@ -162,7 +162,7 @@ contract StakingHandler is Test, IStakingHandler {
     }
 
     /// @inheritdoc IStakingHandler
-    function stakeFor(address user, uint8 nodeIndex, uint48 amountToStake) public override {
+    function stakeFor(address user, uint8 nodeIndex, uint256 amountToStake) public override {
 
         // user should not be a precompile address (0x1 - 0xFFFF) or a contract
         vm.assume(user.code.length == 0);
@@ -172,11 +172,12 @@ contract StakingHandler is Test, IStakingHandler {
         vm.assume(staking.nodes().activeNodeExists(node));
 
         // Constrain inputs to valid scenarios
+        amountToStake = bound(amountToStake, 0, type(uint48).max);
         address staker = user;
 
-        vm.deal(staker, uint256(amountToStake) + 1e13); // add some extra
+        vm.deal(staker, amountToStake + 1e13); // add some extra
         vm.prank(staker);
-        staking.stake{value: uint256(amountToStake) + 1e13}(node);
+        staking.stake{value: amountToStake + 1e13}(node);
     }
 
     /// @inheritdoc IStakingHandler
@@ -274,7 +275,7 @@ contract StakingHandler is Test, IStakingHandler {
     }
 
     /// @inheritdoc IStakingHandler
-    function claimFee(uint8 nodeIndex, uint32 amount) public override {
+    function claimFee(uint8 nodeIndex, uint256 amount) public override {
         NodeId node = fixtureNode[nodeIndex % fixtureNode.length];
         assert(staking.nodes().activeNodeExists(node));
         Fair fees = staking.getEarnedFeeAmount(node);
@@ -282,10 +283,10 @@ contract StakingHandler is Test, IStakingHandler {
 
         // No real improvement from transforming to strict - optimized by the compiler
         // solhint-disable-next-line gas-strict-inequalities
-        vm.assume(Fair.unwrap(fees) >= uint256(amount) && amount != 0);
+        vm.assume(Fair.unwrap(fees) >= amount && amount != 0);
         address nodeOwner = staking.nodes().getNode(node).nodeAddress;
         vm.prank(nodeOwner);
-        staking.requestFees(node, Fair.wrap(uint256(amount)));
+        staking.requestFees(node, Fair.wrap(amount));
 
         _usersLeaving.add(nodeOwner);
     }

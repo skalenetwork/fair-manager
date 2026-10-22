@@ -34,22 +34,22 @@ interface IRBTHandler {
     /**
      * @notice Inserts a node with a given weight into the Red-Black Tree
      * @param nodeIndex Index of node in the fixture node array
-     * @param weight The weight to associate with the node (must be greater than 0)
+     * @param weight The weight to associate with the node (bounded to [1, type(uint48).max])
      */
-    function insert(uint8 nodeIndex, uint48 weight) external;
+    function insert(uint256 nodeIndex, uint256 weight) external;
 
     /**
      * @notice Removes a node from the Red-Black Tree
      * @param nodeIndex Index of node in the fixture node array
      */
-    function remove(uint8 nodeIndex) external;
+    function remove(uint256 nodeIndex) external;
 
     /**
      * @notice Updates the weight of an existing node in the Red-Black Tree
      * @param nodeIndex Index of node in the fixture node array
-     * @param weight The new weight for the node (must be greater than 0)
+     * @param weight The new weight for the node (bounded to [1, type(uint48).max])
      */
-    function setWeight(uint8 nodeIndex, uint48 weight) external;
+    function setWeight(uint256 nodeIndex, uint256 weight) external;
 
     /**
      * @notice Checks if a node has been inserted into the tree
@@ -96,7 +96,6 @@ contract RBTHandler is Test, IRBTHandler {
      * @notice Constructor
      * @param _rbt The address of the RedBlackTreeTester contract
      * @dev Max is set to 150 nodes in the tree - corresponds to a Max tree height of 8
-     * @dev If increased beyond 256 nodes, adjust nodeIndex inputs to allow indexes over 255
      */
     constructor(RedBlackTreeTester _rbt) {
         rbt = _rbt;
@@ -106,25 +105,25 @@ contract RBTHandler is Test, IRBTHandler {
     }
 
     /// @inheritdoc IRBTHandler
-    function insert(uint8 nodeIndex, uint48 weight) public override {
+    function insert(uint256 nodeIndex, uint256 weight) public override {
         NodeId node = fixtureNode[nodeIndex % fixtureNode.length];
         vm.assume(!insertedKeys[NodeId.wrap(NodeId.unwrap(node) - 1)]);
-        vm.assume(weight > 0);
+        weight = bound(weight, 1, type(uint48).max);
         _insert(node, weight);
     }
 
     /// @inheritdoc IRBTHandler
-    function remove(uint8 nodeIndex) public override {
+    function remove(uint256 nodeIndex) public override {
         NodeId node = fixtureNode[nodeIndex % fixtureNode.length];
         vm.assume(insertedKeys[NodeId.wrap(NodeId.unwrap(node) - 1)]);
         _remove(node);
     }
 
     /// @inheritdoc IRBTHandler
-    function setWeight(uint8 nodeIndex, uint48 weight) public override {
+    function setWeight(uint256 nodeIndex, uint256 weight) public override {
         NodeId node = fixtureNode[nodeIndex % fixtureNode.length];
         vm.assume(insertedKeys[NodeId.wrap(NodeId.unwrap(node) - 1)]);
-        vm.assume(weight > 0);
+        weight = bound(weight, 1, type(uint48).max);
 
         rbt.setWeight(node, weight);
     }

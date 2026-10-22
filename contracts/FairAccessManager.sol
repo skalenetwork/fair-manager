@@ -49,6 +49,11 @@ contract FairAccessManager is AccessManagerUpgradeable {
     /// @notice Role ID for Status contract operations
     uint64 public constant STATUS_ROLE = 4;
 
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor() {
+        _disableInitializers();
+    }
+
     /**
      * @notice Initializes the FairAccessManager contract
      * @dev Sets up the initial admin with full access control privileges

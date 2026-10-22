@@ -38,12 +38,12 @@ yarn install
 echo "Deploy previous version"
 
 # need to configure boot instance for deploying
-if [ -n "$INFURA_API_TOKEN" ]; then
-    MAINNET_ENDPOINT="https://mainnet.infura.io/v3/${INFURA_API_TOKEN}"
+if [ -n "$ALCHEMY_API_KEY" ]; then
+    MAINNET_ENDPOINT="https://eth-mainnet.g.alchemy.com/v2/${ALCHEMY_API_KEY}"
 else
     MAINNET_ENDPOINT="https://eth.llamarpc.com"
 fi
-CHAIN_NAME="affectionate-immediate-pollux"
+CHAIN_NAME="elated-tan-skat" # TODO: replace with fair boot when created
 
 DEPLOY_OUTPUT_FILE="$GITHUB_WORKSPACE/data/deploy.txt"
 export TARGET="production"

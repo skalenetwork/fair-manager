@@ -4,7 +4,6 @@ set -e
 
 : "${BRANCH?Need to set BRANCH}"
 : "${VERSION?Need to set VERSION}"
-: "${NODE_AUTH_TOKEN?Need to set NODE_AUTH_TOKEN}"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$SCRIPT_DIR/.."
@@ -29,4 +28,4 @@ if [[ "$BRANCH" != "stable" ]]; then
   TAG="--tag $BRANCH"
 fi
 
-npm publish --access public $TAG
+npm publish --access public $TAG --provenance
