@@ -41,25 +41,25 @@ interface IStatusHandler {
      * @notice Whitelists a node from the fixtureNode list
      * @param nodeIndex Index into the fixture node array (modulo array length)
      */
-    function whitelistNode(uint8 nodeIndex) external;
+    function whitelistNode(uint256 nodeIndex) external;
 
     /**
      * @notice Removes a node from the whitelist
      * @param nodeIndex Index into the fixture node array (modulo array length)
      */
-    function removeNodeFromWhitelist(uint8 nodeIndex) external;
+    function removeNodeFromWhitelist(uint256 nodeIndex) external;
 
     /**
      * @notice Sends alive heartbeats from a random sample of nodes
      * @param numAlives Number of random nodes to send heartbeats (modulo fixture length)
      */
-    function randomAlives(uint8 numAlives) external;
+    function randomAlives(uint256 numAlives) external;
 
     /**
      * @notice Warps time to eject all unhealthy nodes, then sends heartbeats from a sample
      * @param numAlives Number of random nodes to send heartbeats after ejection
      */
-    function alivesSomeWithAllEjected(uint8 numAlives) external;
+    function alivesSomeWithAllEjected(uint256 numAlives) external;
 
     /**
      * @notice Warps time to make all nodes unhealthy, then sends heartbeats from all
@@ -129,7 +129,7 @@ contract StatusHandler is Test, IStatusHandler {
     }
 
     /// @inheritdoc IStatusHandler
-    function whitelistNode(uint8 nodeIndex) public override {
+    function whitelistNode(uint256 nodeIndex) public override {
         NodeId node = fixtureNode[nodeIndex % fixtureNode.length];
         vm.assume(!status.isWhitelisted(node));
         address nodeOwner = status.nodes().getNode(node).nodeAddress;
@@ -140,7 +140,7 @@ contract StatusHandler is Test, IStatusHandler {
     }
 
     /// @inheritdoc IStatusHandler
-    function removeNodeFromWhitelist(uint8 nodeIndex) public override {
+    function removeNodeFromWhitelist(uint256 nodeIndex) public override {
         NodeId node = fixtureNode[nodeIndex % fixtureNode.length];
         vm.assume(status.isWhitelisted(node));
         address nodeOwner = status.nodes().getNode(node).nodeAddress;
@@ -151,8 +151,8 @@ contract StatusHandler is Test, IStatusHandler {
     }
 
     /// @inheritdoc IStatusHandler
-    function randomAlives(uint8 numAlives) public override {
-        uint256 alives = uint256(numAlives) % fixtureNode.length;
+    function randomAlives(uint256 numAlives) public override {
+        uint256 alives = numAlives % fixtureNode.length;
         uint256[] memory nodes = _getRandomSample(alives, fixtureNode.length);
         for (uint256 i = 0; i < alives; ++i) {
             address nodeOwner = status.nodes().getNode(NodeId.wrap(nodes[i])).nodeAddress;
@@ -164,10 +164,10 @@ contract StatusHandler is Test, IStatusHandler {
     }
 
     /// @inheritdoc IStatusHandler
-    function alivesSomeWithAllEjected(uint8 numAlives) public override {
+    function alivesSomeWithAllEjected(uint256 numAlives) public override {
         uint256 numNodes = fixtureNode.length;
 
-        uint256 alives = uint256(numAlives) % numNodes;
+        uint256 alives = numAlives % numNodes;
         uint256[] memory nodes = _getRandomSample(alives, numNodes);
 
         vm.warp(block.timestamp + 2 * Duration.unwrap(status.heartbeatInterval()));
