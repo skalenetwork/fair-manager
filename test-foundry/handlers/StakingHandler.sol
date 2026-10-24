@@ -195,9 +195,6 @@ contract StakingHandler is Test, IStakingHandler {
         // node owners cannot retrieve
         vm.assume(staker != staking.nodes().getNode(node).nodeAddress);
 
-        // TODO: FIX #247 - remove flush
-        staking.getRewardWallet(node).flush();
-
         vm.prank(staker);
         staking.requestRetrieveAll(node);
 
@@ -263,9 +260,6 @@ contract StakingHandler is Test, IStakingHandler {
         assert(staking.nodes().activeNodeExists(node));
         Fair fees = staking.getEarnedFeeAmount(node);
         vm.assume(fees > Fair.wrap(0));
-
-        // TODO: FIX #247 - remove flush
-        staking.getRewardWallet(node).flush();
 
         address nodeOwner = staking.nodes().getNode(node).nodeAddress;
         vm.prank(nodeOwner);
