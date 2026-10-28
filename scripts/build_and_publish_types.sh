@@ -5,6 +5,11 @@ set -e
 : "${BRANCH?Need to set BRANCH}"
 : "${VERSION?Need to set VERSION}"
 
+if [[ "$VERSION" == *-stable.0 ]]
+then
+    export VERSION=${VERSION%-stable.0}
+fi
+
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$SCRIPT_DIR/.."
 TYPES_PACKAGE_DIR="$PROJECT_ROOT/types-package"
